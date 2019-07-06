@@ -1,0 +1,35 @@
+#!/bin/sh
+MUSICDIR="${HOME}/MusicPlayer0"
+SDCARD='/dev/mmcblk0'
+MPOINT="${HOME}/x5/tf0"
+HOME='/home/stelterd'
+
+if [ ! -r "$MUSICDIR" ]; then
+	echo "Musicdir '${MUSICDIR}' does not exist/is not readable" 2>&1
+	exit 1
+fi
+
+if [ ! -d "$MPOINT" ]; then
+	echo "Mountpoint '${MPOINT}' does not exist/is not a directory" 2>&1
+	exit 1
+fi
+
+if [ ! -b "$SDCARD" ]; then
+	echo "SD card device '${SDCARD}' does not exist/is not a block device" 2>&1
+	exit 1
+fi
+
+if ! mount |grep "$SDCARD" ; then
+	#if ! sudo mount -t auto "${SDCARD}" "${MPOINT}" ; then
+	if ! sudo mount.exfat-fuse "$SDCARD" "$MPOINT" ; then
+		echo "FATAL: could not mount sdcard"
+		exit 1
+	fi
+fi
+
+sudo "${HOME}/bin/syncmusic0" && \
+echo && \
+df -h "$MPOINT" && \
+echo && \
+sudo echo "unmounting..." && \
+time sudo umount "$SDCARD"

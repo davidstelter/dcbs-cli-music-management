@@ -1,0 +1,6 @@
+#!/bin/sh
+SRC=/home/stelterd/MusicPlayer/
+DST=/home/stelterd/x5/tf1/Music
+
+#rsync -r --size-only --dry-run --itemize-changes "${SRC}" "${DST}"
+rsync --delete -v -r -L --size-only "${SRC}" "${DST}"
